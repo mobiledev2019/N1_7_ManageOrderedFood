@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--Tên món-->
+        <TextView
+            android:id="@+id/txtBillFoodName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_weight="5"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:text="Bánh tráng trộn nướng" >
+        </TextView>
+        <!--Số lượng món-->
+        <TextView
+            android:id="@+id/txtBillFoodQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:text="2" >
+        </TextView>
+        <!--Giá của món-->
+        <TextView
+            android:id="@+id/txtBillFoodPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:text="12000" >
+        </TextView>
+        <!--Thành tiền-->
+        <TextView
+            android:id="@+id/txtBillFoodPay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:text="24000" >
+        </TextView>
+    </LinearLayout>
+
+
+</android.support.v7.widget.CardView>
