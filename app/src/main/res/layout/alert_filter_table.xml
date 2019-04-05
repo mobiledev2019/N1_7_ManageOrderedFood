@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <TextView
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_margin="8dp"
+        android:text="Loại bàn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <RadioGroup
+            android:orientation="horizontal"
+            android:id="@+id/radioTypeTable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioNormal"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:text="@string/radio_type_table_normal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <RadioButton
+                android:id="@+id/radioVIP"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:text="@string/radio_type_table_vip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        </RadioGroup>
+    <TextView
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_margin="8dp"
+        android:text="Trạng thái"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <RadioGroup
+        android:orientation="horizontal"
+        android:id="@+id/radioStatusTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/radioNotUse"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:text="@string/radio_status_space"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <RadioButton
+            android:id="@+id/radioUsing"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:text="@string/radio_status_using"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </RadioGroup>
+    <TextView
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_margin="8dp"
+        android:text="Số chỗ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <RadioGroup
+        android:orientation="horizontal"
+        android:id="@+id/radioCapacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/radioCon2"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:checked="true"
+            android:text="@string/radio_capacity_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <RadioButton
+            android:id="@+id/radioCon4"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:text="@string/radio_capacity_4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <RadioButton
+            android:id="@+id/radioCon6"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:text="@string/radio_capacity_6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+    </RadioGroup>
+
+</LinearLayout>

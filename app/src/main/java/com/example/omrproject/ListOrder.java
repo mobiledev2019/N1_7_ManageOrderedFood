@@ -1,8 +1,10 @@
 package com.example.omrproject;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -70,8 +72,7 @@ public class ListOrder extends AppCompatActivity {
             btnOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent menuIntent = new Intent(ListOrder.this, Home.class);
-                    startActivity(menuIntent);
+                    showOptionDialog();
                 }
             });
             btnPay.setOnClickListener(new View.OnClickListener(){
@@ -90,6 +91,39 @@ public class ListOrder extends AppCompatActivity {
 
         loadlistOrder(tableId);
 
+    }
+
+    private void showOptionDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ListOrder.this);
+        alertDialog.setTitle("Tìm món");
+        alertDialog.setMessage("Chọn chế độ tìm món: ");
+
+        alertDialog.setPositiveButton("THEO TÊN", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
+                searchFood.putExtra("searchMode", "byname");
+                startActivity(searchFood);
+            }
+        });
+
+        alertDialog.setNeutralButton("DANH MỤC", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent home = new Intent(ListOrder.this, Home.class);
+                startActivity(home);
+            }
+        });
+
+        alertDialog.setNegativeButton("THEO MÃ", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
+                searchFood.putExtra("searchMode", "byid");
+                startActivity(searchFood);
+            }
+        });
+        alertDialog.show();
     }
 
     private void loadlistOrder(String tableId) {

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.omrproject.Model.Order;
+import com.example.omrproject.Model.Table;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,22 +48,69 @@ public class DBOrder {
         });
         return listFoods;
     }
-    public void addOrder(String tableId, final Order order){
-            final DatabaseReference foods = tables.child(tableId).child("foods");
-            foods.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    int size = (int) dataSnapshot.getChildrenCount() + 1;
-                    foods.child(size+"").setValue(order);
+    public void isUsed(final String tableId){
+        tables.child(tableId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Table table = dataSnapshot.getValue(Table.class);
+                    String newTCS = table.getType() + table.getNumberOfSeat() + "1";
+                    dataSnapshot.getRef().child("typeCapSt").setValue(newTCS);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void unUsed(String tableId){
+        tables.child(tableId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Table table = dataSnapshot.getValue(Table.class);
+                String newTCS = table.getType() + table.getNumberOfSeat() + "0";
+                dataSnapshot.getRef().child("typeCapSt").setValue(newTCS);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void addOrder(final String tableId, final Order order){
+
+        final DatabaseReference foods = tables.child(tableId).child("foods");
+        foods.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean exist = false;
+                for (DataSnapshot food : dataSnapshot.getChildren()){
+                    Order orderedFood = food.getValue(Order.class);
+                    if(orderedFood.getFoodId().equalsIgnoreCase(order.getFoodId())){
+                        int newQuantity = Integer.parseInt(food.child("quantity").getValue().toString()) + Integer.parseInt(order.getQuantity());
+                        food.getRef().child("quantity").setValue(newQuantity+"");
+                        exist = true;
+                        break;
+                    }
                 }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                if(!exist){
+                    int size = (int) dataSnapshot.getChildrenCount() + 1;
+                    if(size==1) isUsed(tableId);
+                    foods.child(size+"").setValue(order);
                 }
-            });
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
     public void deleteOrder(String tableId){
+        unUsed(tableId);
         tables.child(tableId).child("foods").setValue(null);
     }
 

@@ -2,14 +2,19 @@ package com.example.omrproject;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.nfc.Tag;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,7 +33,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,7 +70,7 @@ public class BillView extends AppCompatActivity {
     List<Order> listFoods = new ArrayList<>();
     BillAdapter adapter;
 
-
+    private static final String LOG_TAG = BillView.class.getSimpleName();
     String tableId = "";
     String createdTime = "";
     @Override
@@ -149,6 +169,7 @@ public class BillView extends AppCompatActivity {
                 mDialog.setMessage("Đang xử lý, vui lòng chờ....");
                 mDialog.show();
                 try{
+                    createPdf();
                     bill.child(createdTime).setValue(new Bill(
                             Common.currentStaffId,
                             txtStaffName.getText().toString(),
@@ -162,8 +183,8 @@ public class BillView extends AppCompatActivity {
                             mDialog.dismiss();
                             Toast.makeText(BillView.this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
                             new DBOrder().deleteOrder(tableId);
-                            Intent table = new Intent(BillView.this, TableList.class);
-                            table.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            Intent table = new Intent(BillView.this, SendBill.class);
+//                            table.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(table);
                             finish();
                         }
@@ -185,5 +206,150 @@ public class BillView extends AppCompatActivity {
             }
         });
         alertDialog.show();
+    }
+
+    private void createPdf(){
+        Document document = new Document();
+        try{
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ORMApp";
+            System.out.println(path);
+
+            File dir = new File(path);
+            if(!dir.exists()) dir.mkdir();
+
+            File bill = new File(dir, "bill.pdf");
+
+            FileOutputStream fOut = new FileOutputStream(bill);
+            PdfWriter.getInstance(document, fOut);
+
+            //open to write
+            document.open();
+
+            document.setPageSize(PageSize.A4);
+            document.addCreationDate();
+            document.addAuthor("AnTPTIT");
+            document.addCreator("AnhxTank");
+
+            //text color
+            BaseColor mColorAccent = new BaseColor(0, 153, 204, 255);
+            float mHeadingFontSize = 20.0f;
+            float mValueFontSize = 26.0f;
+
+            //Font
+            BaseFont urName = BaseFont.createFont(BaseFont.HELVETICA, "UTF-8", BaseFont.EMBEDDED);
+            // LINE SEPARATOR
+            LineSeparator lineSeparator = new LineSeparator();
+            lineSeparator.setLineColor(new BaseColor(0, 0, 0, 68));
+
+            // Title Order Details...
+            // Adding Title....
+            Font mOrderDetailsTitleFont = new Font(urName, 36.0f, Font.NORMAL, BaseColor.BLACK);
+            // Creating Chunk
+            Chunk mOrderDetailsTitleChunk = new Chunk("HÓA ĐƠN", mOrderDetailsTitleFont);
+            // Creating Paragraph to add...
+            Paragraph mOrderDetailsTitleParagraph = new Paragraph(mOrderDetailsTitleChunk);
+            // Setting Alignment for Heading
+            mOrderDetailsTitleParagraph.setAlignment(Element.ALIGN_CENTER);
+            // Finally Adding that Chunk
+            document.add(mOrderDetailsTitleParagraph);
+
+            //Draw line and down line
+            document.add(new Paragraph(""));
+            document.add(new Chunk(lineSeparator));
+            document.add(new Paragraph(""));
+
+            Font mOrderTitleFont = new Font(urName, mHeadingFontSize, Font.NORMAL, mColorAccent);
+            Font mOrderValueFont = new Font(urName, mValueFontSize, Font.NORMAL, BaseColor.BLACK);
+
+            // Mã hóa đơn
+            Chunk mOrderIdChunk = new Chunk("Mã hóa đơn", mOrderTitleFont);
+            document.add(new Paragraph(mOrderIdChunk));
+
+            Chunk mOrderIdValueChunk = new Chunk(txtBillId.getText().toString(), mOrderValueFont);
+            document.add(new Paragraph(mOrderIdValueChunk));
+
+            //Draw line and down line
+            document.add(new Paragraph(""));
+            document.add(new Chunk(lineSeparator));
+            document.add(new Paragraph(""));
+
+            // Mã bàn
+            Chunk mOrderTableTitleChunk = new Chunk("Mã bàn", mOrderTitleFont);
+            document.add(new Paragraph(mOrderTableTitleChunk));
+
+            Chunk mOrderTableValueChunk = new Chunk(txtBillTable.getText().toString(), mOrderValueFont);
+            document.add(new Paragraph(mOrderTableValueChunk));
+
+            //Draw line and down line
+            document.add(new Paragraph(""));
+            document.add(new Chunk(lineSeparator));
+            document.add(new Paragraph(""));
+
+            // Thời gian
+            Chunk mOrderTimeChunk = new Chunk("Thời gian", mOrderTitleFont);
+            document.add(new Paragraph(mOrderTimeChunk));
+
+            Chunk mOrderTimeValueChunk = new Chunk(txtCreatedBill.getText().toString(), mOrderValueFont);
+            document.add(new Paragraph(mOrderTimeValueChunk));
+
+            //Draw line and down line
+            document.add(new Paragraph(""));
+            document.add(new Chunk(lineSeparator));
+            document.add(new Paragraph(""));
+
+            // Danh sách món
+            Chunk mOrderFoodChunk = new Chunk("MENU", mOrderTitleFont);
+            Paragraph mOrderFoodParagraph = new Paragraph(mOrderFoodChunk);
+            mOrderFoodParagraph.setAlignment(Element.ALIGN_CENTER);
+            document.add(mOrderFoodParagraph);
+
+            //Draw line and down line
+            document.add(new Paragraph(""));
+            document.add(new Chunk(lineSeparator));
+            document.add(new Paragraph(""));
+
+            for (Order food: listFoods){
+
+                Chunk glue = new Chunk(new VerticalPositionMark());
+                Paragraph p = new Paragraph(food.getFoodName());
+                p.add(new Chunk(glue));
+                p.add("("+food.getDiscount()+"%)");
+                Paragraph p1 = new Paragraph(food.getQuantity()+"*"+food.getPrice());
+                p1.add(new Chunk(glue));
+                p1.add((Integer.parseInt(food.getPrice()))*(Integer.parseInt(food.getQuantity()))+"");
+                document.add(p);
+                document.add(p1);
+
+                //Draw line and down line
+                document.add(new Paragraph(""));
+                document.add(new Chunk(lineSeparator));
+                document.add(new Paragraph(""));
+            }
+
+            Chunk glue = new Chunk(new VerticalPositionMark());
+
+            //Tổng hóa đơn
+            Paragraph p = new Paragraph("Tổng: ");
+            p.setFont(mOrderTitleFont);
+            p.add(new Chunk(glue));
+            p.add(txtTotalBill.getText().toString());
+            document.add(p);
+
+            //Nhân viên
+            Paragraph p1 = new Paragraph("Nhân viên quầy ");
+            p1.setFont(mOrderTitleFont);
+            p1.add(new Chunk(glue));
+            p1.add(txtStaffName.getText().toString());
+            document.add(p1);
+
+        } catch (DocumentException de) {
+            Log.e("PDFCreator", "DocumentException:" + de);
+        } catch (IOException e) {
+            Log.e("PDFCreator", "ioException:" + e);
+        }
+        finally
+        {
+            document.close();
+        }
     }
 }

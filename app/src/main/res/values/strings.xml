@@ -8,4 +8,11 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="radio_type_table_normal">Normal</string>
+    <string name="radio_type_table_vip">VIP</string>
+    <string name="radio_status_space">Trống</string>
+    <string name="radio_status_using">Đang sử dụng</string>
+    <string name="radio_capacity_2">2</string>
+    <string name="radio_capacity_4">4</string>
+    <string name="radio_capacity_6">6</string>
 </resources>

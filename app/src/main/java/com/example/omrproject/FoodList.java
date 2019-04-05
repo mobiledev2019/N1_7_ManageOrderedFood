@@ -31,7 +31,7 @@ public class FoodList extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference foodList;
 
-    String categoryId="" , tableId="";
+    String categoryId="";
 
     FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter;
 

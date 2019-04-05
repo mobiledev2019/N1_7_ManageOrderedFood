@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.omrproject">
+    package="com.example.omrproject"
+    android:installLocation="auto">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         tools:replace="android:theme">
-        <activity android:name=".BillView"
+        <activity android:name=".SendBill"></activity>
+        <activity android:name=".SearchFood" />
+        <activity
+            android:name=".BillView"
             android:parentActivityName=".ListOrder">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ListOrder"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ListOrder" />
         </activity>
         <activity android:name=".ListOrder" />
         <activity android:name=".TableList" />

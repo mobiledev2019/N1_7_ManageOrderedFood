@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -20,7 +21,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.omrproject.Common.Common;
 import com.example.omrproject.Interface.ItemClickListener;
@@ -28,16 +32,20 @@ import com.example.omrproject.Model.Table;
 import com.example.omrproject.ViewHolder.TableViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class TableList extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     RecyclerView recycler_table;
     RecyclerView.LayoutManager layoutManager;
     FirebaseRecyclerAdapter<Table, TableViewHolder> adapter;
-
     TextView txtFullName;
+    FloatingActionButton btnFilterTable;
 
     FirebaseDatabase database;
     DatabaseReference tables;
@@ -54,13 +62,15 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
         adapter.stopListening();
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tables);
 
 
-
+        btnFilterTable = (FloatingActionButton) findViewById(R.id.btn_filter_table);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_table);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
@@ -81,6 +91,13 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
         txtFullName = (TextView) headerView.findViewById(R.id.txtFullName);
         txtFullName.setText(Common.currentStaff.getFullName());
 
+        btnFilterTable.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                showFilterDialog();
+            }
+        });
+
         //load list Table
         recycler_table = (RecyclerView) findViewById(R.id.recycler_table);
         recycler_table.setHasFixedSize(true);
@@ -90,7 +107,62 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
         loadTables();
     }
 
+    private void showFilterDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(TableList.this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.alert_filter_table, null);
+        alertDialog.setView(dialogView);
+
+        //get Radio Group
+        final RadioGroup radioType = (RadioGroup) dialogView.findViewById(R.id.radioTypeTable);
+        final RadioGroup radioStatus = (RadioGroup) dialogView.findViewById(R.id.radioStatusTable);
+        final RadioGroup radioCapacity = (RadioGroup) dialogView.findViewById(R.id.radioCapacity);
+
+
+
+        alertDialog.setPositiveButton("LỌC", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //get radio button selected
+                int selectedTypeId = radioType.getCheckedRadioButtonId();
+                int selectedStatusId = radioStatus.getCheckedRadioButtonId();
+                int selectedCapacityId = radioCapacity.getCheckedRadioButtonId();
+
+                RadioButton radioType = (RadioButton) dialogView.findViewById(selectedTypeId);
+                RadioButton radioStatus = (RadioButton) dialogView.findViewById(selectedStatusId);
+                RadioButton radioCapacity = (RadioButton) dialogView.findViewById(selectedCapacityId);
+                //get Value
+                String type = (radioType!=null)? radioType.getText().toString():"";
+                String status = (radioStatus!=null)? radioStatus.getText().toString():"";
+                String capacity = (radioCapacity!=null)? radioCapacity.getText().toString():"";
+
+                String statusTable = (!status.isEmpty())?((status.equalsIgnoreCase("Trống"))? "0":"1"):"";
+                String query = type+capacity+statusTable;
+                Toast.makeText(TableList.this, query,Toast.LENGTH_SHORT).show();
+                //reset list
+                resetTables(type,capacity,statusTable);
+
+            }
+        });
+
+        alertDialog.setNeutralButton("TẤT CẢ", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                        loadTables();
+            }
+        });
+
+        alertDialog.setNegativeButton("HỦY", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialog.show();
+    }
+
     private void loadTables(){
+
         FirebaseRecyclerOptions<Table> options = new FirebaseRecyclerOptions.Builder<Table>().setQuery(tables, Table.class).build();
         adapter = new FirebaseRecyclerAdapter<Table, TableViewHolder>(options) {
             @Override
@@ -126,6 +198,62 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
                 return new TableViewHolder(view);
             }
         };
+        adapter.startListening();
+        recycler_table.setAdapter(adapter);
+    }
+
+    protected void resetTables(final String type, final String capacity, final String status){
+        String query = type+capacity+status;
+        Query listTable;
+        if(type.equalsIgnoreCase("")&&!status.equalsIgnoreCase("")){
+             listTable = database.getReference("Tables").orderByChild("capSt").equalTo(query);
+        }else if(!type.equalsIgnoreCase("")&&status.equalsIgnoreCase("")){
+            listTable = database.getReference("Tables").orderByChild("typeCapSt").startAt(query).endAt(query+"\uf8ff");
+        }else if(type.equalsIgnoreCase("")&&status.equalsIgnoreCase("")){
+            listTable = database.getReference("Tables").orderByChild("numberOfSeat").equalTo(query);
+        }else{
+            listTable = database.getReference("Tables").orderByChild("typeCapSt").equalTo(query);
+        }
+
+        FirebaseRecyclerOptions<Table> options = new FirebaseRecyclerOptions.Builder<Table>().setQuery(listTable, Table.class).build();
+        adapter = new FirebaseRecyclerAdapter<Table, TableViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull TableViewHolder holder, int position, @NonNull Table model) {
+//                boolean selectSpace = ((occupiedOption==0&&model.getFoods()==null)||(occupiedOption==1&&model.getFoods()!=null))? true:false;
+//                if(model.getType().equalsIgnoreCase(type)&&model.getNumberOfSeat().equalsIgnoreCase(capacity)&&selectSpace){
+                    holder.table_name.setText(adapter.getRef(position).getKey());
+                    if(model.getFoods()!=null){
+                        holder.table_layout.setBackground(ContextCompat.getDrawable(TableList.this, R.drawable.circle_green));
+                        holder.table_name.setBackground(ContextCompat.getDrawable(TableList.this, R.drawable.circle_white));
+                        holder.table_name.setTextColor(Color.parseColor("#A9d440"));
+                        holder.table_img.setImageDrawable(ContextCompat.getDrawable(TableList.this, R.drawable.ic_table_white));
+                    }
+                    else{
+                        holder.table_layout.setBackground(ContextCompat.getDrawable(TableList.this, R.drawable.circle_green_stroke));
+                        holder.table_name.setBackground(ContextCompat.getDrawable(TableList.this, R.drawable.circle_black));
+                        holder.table_name.setTextColor(Color.WHITE);
+                        holder.table_img.setImageDrawable(ContextCompat.getDrawable(TableList.this, R.drawable.ic_table));
+                    }
+                    final Table clickItem = model;
+                    holder.setItemClickListener(new ItemClickListener() {
+                        @Override
+                        public void onClick(View view, int position, boolean isLongClick) {
+                            Intent homeIntent = new Intent(TableList.this, ListOrder.class);
+                            Common.currentTable = adapter.getRef(position).getKey();
+                            startActivity(homeIntent);
+                        }
+                    });
+//                }else{}
+            }
+
+            @NonNull
+            @Override
+            public TableViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.table_item, viewGroup, false);
+                return new TableViewHolder(view);
+            }
+        };
+        adapter.startListening();
         recycler_table.setAdapter(adapter);
     }
 
