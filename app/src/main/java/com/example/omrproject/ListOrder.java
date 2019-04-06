@@ -147,11 +147,13 @@ public class ListOrder extends AppCompatActivity {
                     //if nothing, disable button pay
                     if(total==0){
                         btnPay.setEnabled(false);
+                        btnPay.setBackgroundResource(R.drawable.rectangle_rounded);
                         btnPay.setBackgroundColor(Color.parseColor("#aaaaaa"));
                     }
                     else{
                         btnPay.setEnabled(true);
-                        btnPay.setBackgroundColor(Color.parseColor("#A9d440"));
+                        btnPay.setBackgroundResource(R.drawable.rectangle_rounded);
+                        btnPay.setBackgroundColor(Color.parseColor("#f17e7e"));
                     }
                     //set total
                     Locale locale = new Locale ("en", "US");

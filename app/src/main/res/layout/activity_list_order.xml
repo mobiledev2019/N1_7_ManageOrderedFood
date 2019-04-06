@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/my_bg"
+    android:background="@drawable/test2"
     android:padding="16dp"
     tools:context=".ListOrder">
 
@@ -18,7 +18,8 @@
     
     <android.support.v7.widget.CardView
         android:layout_alignParentBottom="true"
-        app:cardBackgroundColor="@color/colorPrimary"
+        android:background="@drawable/rectangle_rounded"
+        app:cardBackgroundColor="#3f8f8d"
         android:layout_width="match_parent"
         android:layout_height="100dp">
 
@@ -64,7 +65,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="4dp"
                     android:layout_weight="1"
-                    android:background="@color/btnSignActive"
+                    android:background="#47D476"
                     android:text="Đặt Món"
                     android:textStyle="bold"
                     android:textColor="@android:color/white" />
@@ -77,7 +78,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_marginVertical="8dp"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/btnSignActive"
+                    android:background="#f17e7e"
                     android:text="Thanh Toán"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"

@@ -11,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.example.omrproject.Common.Common;
+import com.example.omrproject.Database.DBOrder;
 import com.example.omrproject.Interface.ItemClickListener;
 import com.example.omrproject.Model.Food;
+import com.example.omrproject.Model.Order;
 import com.example.omrproject.ViewHolder.FoodViewHolder;
 import com.example.omrproject.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -75,8 +78,22 @@ public class FoodList extends AppCompatActivity {
         FirebaseRecyclerOptions<Food> options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByChild("menuId").equalTo(categoryId), Food.class).build();
         adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull FoodViewHolder holder, int position, @NonNull Food model) {
+            protected void onBindViewHolder(@NonNull FoodViewHolder holder, final int position, @NonNull final Food model) {
                 holder.food_name.setText(model.getName());
+                final ElegantNumberButton numberButton = (ElegantNumberButton) holder.numberButton;
+                holder.btnAddFood.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        new DBOrder().addOrder(Common.currentTable,new Order(
+                                adapter.getRef(position).getKey(),
+                                model.getName(),
+                                numberButton.getNumber(),
+                                model.getPrice(),
+                                model.getDiscount()
+                        ));
+                        Toast.makeText(FoodList.this, "Thêm" + model.getName() + "x" + numberButton.getNumber(), Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Picasso.with(getBaseContext()).load(model.getImg()).into(holder.food_img);
 
                 final Food local = model;

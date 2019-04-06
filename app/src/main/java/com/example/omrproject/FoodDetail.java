@@ -63,7 +63,7 @@ public class FoodDetail extends AppCompatActivity {
                         currentFood.getPrice(),
                         currentFood.getDiscount()
                 ));
-                Toast.makeText(FoodDetail.this, "Added to list order food", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FoodDetail.this, "Thêm " + currentFood.getName() + "x" + numberButton.getNumber(), Toast.LENGTH_SHORT).show();
             }
         });
         food_description = (TextView) findViewById(R.id.food_description);

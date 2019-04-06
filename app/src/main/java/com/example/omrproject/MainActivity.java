@@ -9,6 +9,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import gr.net.maroulis.library.EasySplashScreen;
+
 public class MainActivity extends AppCompatActivity {
     Button btnSignUp, btnSignIn;
     TextView txtSlogan;
@@ -16,6 +18,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        EasySplashScreen config = new EasySplashScreen(MainActivity.this)
+                .withFullScreen()
+                .withTargetActivity(SignIn.class)
+                .withSplashTimeOut(5000);
         setContentView(R.layout.activity_main);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
@@ -23,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         txtSlogan = (TextView) findViewById(R.id.txtSlogan);
         Typeface face = Typeface.createFromAsset(getAssets(), "fonts/NABILA.TTF");
         txtSlogan.setTypeface(face);
+
+
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -11,11 +11,15 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.example.omrproject.Common.Common;
+import com.example.omrproject.Database.DBOrder;
 import com.example.omrproject.Interface.ItemClickListener;
 import com.example.omrproject.Model.Food;
+import com.example.omrproject.Model.Order;
 import com.example.omrproject.ViewHolder.FoodViewHolder;
 import com.example.omrproject.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -149,62 +153,51 @@ public class SearchFood extends AppCompatActivity {
     }
 
     private void startSearch(CharSequence text) {
+        FirebaseRecyclerOptions<Food> options;
         if(searchMode.equalsIgnoreCase("byname")){
-            FirebaseRecyclerOptions<Food> options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByChild("name").startAt(text.toString().substring(0,1).toUpperCase()+text.toString().substring(1)).endAt(text.toString()+"\uf8ff"), Food.class).build();
-            searchAdapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(options) {
-                @Override
-                protected void onBindViewHolder(@NonNull FoodViewHolder holder, int position, @NonNull Food model) {
-                    holder.food_name.setText(model.getName());
-                    Picasso.with(getBaseContext()).load(model.getImg()).into(holder.food_img);
-
-                    final Food local = model;
-                    holder.setItemClickListener(new ItemClickListener() {
-                        @Override
-                        public void onClick(View view, int position, boolean isLongClick) {
-                            //Start FoodDetail Activity
-                            Intent foodDetail = new Intent (SearchFood.this, FoodDetail.class);
-                            foodDetail.putExtra("foodId", searchAdapter.getRef(position).getKey());
-                            startActivity(foodDetail);
-                        }
-                    });
-                }
-
-                @NonNull
-                @Override
-                public FoodViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                    View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.food_item, viewGroup, false);
-                    return new FoodViewHolder(view);
-                }
-            };
+           options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByChild("name").startAt(text.toString().substring(0,1).toUpperCase()+text.toString().substring(1)).endAt(text.toString()+"\uf8ff"), Food.class).build();
         }
         else{
-            FirebaseRecyclerOptions<Food> options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByKey().equalTo(text.toString()), Food.class).build();
-            searchAdapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(options) {
-                @Override
-                protected void onBindViewHolder(@NonNull FoodViewHolder holder, int position, @NonNull Food model) {
-                    holder.food_name.setText(model.getName());
-                    Picasso.with(getBaseContext()).load(model.getImg()).into(holder.food_img);
-
-                    final Food local = model;
-                    holder.setItemClickListener(new ItemClickListener() {
-                        @Override
-                        public void onClick(View view, int position, boolean isLongClick) {
-                            //Start FoodDetail Activity
-                            Intent foodDetail = new Intent (SearchFood.this, FoodDetail.class);
-                            foodDetail.putExtra("foodId", searchAdapter.getRef(position).getKey());
-                            startActivity(foodDetail);
-                        }
-                    });
-                }
-
-                @NonNull
-                @Override
-                public FoodViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                    View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.food_item, viewGroup, false);
-                    return new FoodViewHolder(view);
-                }
-            };
+           options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByKey().equalTo(text.toString()), Food.class).build();
         }
+        searchAdapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull FoodViewHolder holder, final int position, @NonNull final Food model) {
+                holder.food_name.setText(model.getName());
+                final ElegantNumberButton numberButton = (ElegantNumberButton) holder.numberButton;
+                holder.btnAddFood.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        new DBOrder().addOrder(Common.currentTable,new Order(
+                                adapter.getRef(position).getKey(),
+                                model.getName(),
+                                numberButton.getNumber(),
+                                model.getPrice(),
+                                model.getDiscount()
+                        ));
+                        Toast.makeText(SearchFood.this, "Thêm" + model.getName() + "x" + numberButton.getNumber(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Picasso.with(getBaseContext()).load(model.getImg()).into(holder.food_img);
+
+                final Food local = model;
+                holder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+                        //Start FoodDetail Activity
+                        Intent foodDetail = new Intent (SearchFood.this, FoodDetail.class);
+                        foodDetail.putExtra("foodId", searchAdapter.getRef(position).getKey());
+                        startActivity(foodDetail);
+                    }
+                });
+            }
+            @NonNull
+            @Override
+            public FoodViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.food_item, viewGroup, false);
+                return new FoodViewHolder(view);
+            }
+        };
 
         searchAdapter.startListening();
         recyclerView.setAdapter(searchAdapter);
@@ -233,10 +226,23 @@ public class SearchFood extends AppCompatActivity {
         FirebaseRecyclerOptions<Food> options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList, Food.class).build();
         adapter = new FirebaseRecyclerAdapter<Food, FoodViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull FoodViewHolder holder, int position, @NonNull Food model) {
+            protected void onBindViewHolder(@NonNull FoodViewHolder holder, final int position, @NonNull final Food model) {
                 holder.food_name.setText(model.getName());
+                final ElegantNumberButton numberButton = (ElegantNumberButton) holder.numberButton;
+                holder.btnAddFood.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        new DBOrder().addOrder(Common.currentTable,new Order(
+                                adapter.getRef(position).getKey(),
+                                model.getName(),
+                                numberButton.getNumber(),
+                                model.getPrice(),
+                                model.getDiscount()
+                        ));
+                        Toast.makeText(SearchFood.this, "Thêm" + model.getName() + "x" + numberButton.getNumber(), Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Picasso.with(getBaseContext()).load(model.getImg()).into(holder.food_img);
-
                 final Food local = model;
                 holder.setItemClickListener(new ItemClickListener() {
                     @Override
