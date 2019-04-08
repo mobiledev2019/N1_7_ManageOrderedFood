@@ -1,23 +1,31 @@
 package com.example.omrproject;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
 import com.example.omrproject.Common.Common;
 import com.example.omrproject.Database.DBOrder;
 import com.example.omrproject.Model.Order;
+import com.example.omrproject.Utils.RecyclerItemTouchHelper;
 import com.example.omrproject.ViewHolder.OrderAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,18 +39,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ListOrder extends AppCompatActivity {
+public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-
+    OrderAdapter adapter;
     TextView txtTotalPrice;
     Button btnOrder;
     Button btnPay;
-
+    RelativeLayout relativeLayout;
     String tableId = "";
-
+    boolean remove = true;
 
     FirebaseDatabase database;
     DatabaseReference tables;
@@ -62,6 +70,7 @@ public class ListOrder extends AppCompatActivity {
         tables = database.getReference("Tables");
 
         //init
+        relativeLayout = (RelativeLayout) findViewById(R.id.relative_list_order);
         txtTotalPrice = (TextView) findViewById(R.id.total_price);
         btnOrder = (Button) findViewById(R.id.btnOrder);
         btnPay = (Button) findViewById(R.id.btnPay);
@@ -89,6 +98,11 @@ public class ListOrder extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+//        int resId = R.anim.layout_animation_right_to_left;
+//        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(ListOrder.this, resId);
+//        recyclerView.setLayoutAnimation(animation);
         loadlistOrder(tableId);
 
     }
@@ -134,7 +148,6 @@ public class ListOrder extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
                     List<Order> orders = new ArrayList<>();
-                    OrderAdapter adapter;
                     int total = 0;
                     for(DataSnapshot foodSnapshot: dataSnapshot.getChildren()){
                         Order order = foodSnapshot.getValue(Order.class);
@@ -143,6 +156,7 @@ public class ListOrder extends AppCompatActivity {
                     }
                     adapter = new OrderAdapter(orders, ListOrder.this);
                     recyclerView.setAdapter(adapter);
+//                    runLayoutAnimation(recyclerView, adapter);
 
                     //if nothing, disable button pay
                     if(total==0){
@@ -169,4 +183,54 @@ public class ListOrder extends AppCompatActivity {
         });
 
     }
+
+//    private void runLayoutAnimation(final RecyclerView recyclerView, OrderAdapter adapter) {
+//        final Context context = recyclerView.getContext();
+//        final LayoutAnimationController controller =
+//                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_right_to_left);
+//        recyclerView.setAdapter(adapter);
+//        recyclerView.setLayoutAnimation(controller);
+//        recyclerView.getAdapter().notifyDataSetChanged();
+//        recyclerView.scheduleLayoutAnimation();
+//    }
+
+    @Override
+    public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, final int position) {
+        if (viewHolder instanceof OrderAdapter.OrderViewHolder) {
+            // get the removed item name to display it in snack bar
+            String name = adapter.listFoods.get(viewHolder.getAdapterPosition()).getFoodName();
+
+            // backup of removed item for undo purpose
+            final Order deletedItem = adapter.listFoods.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+
+            // remove the item from recycler view
+            adapter.removeItem(viewHolder.getAdapterPosition());
+
+            // showing snack bar with Undo option
+            final Snackbar snackbar = Snackbar
+                    .make(relativeLayout, "Hủy đặt món " + name, Snackbar.LENGTH_LONG);
+            snackbar.setAction("HOÀN LẠI", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // undo is selected, restore the deleted item
+                    adapter.restoreItem(deletedItem, deletedIndex);
+                }
+            });
+            snackbar.addCallback(new Snackbar.Callback() {
+                @Override
+                public void onDismissed(Snackbar snackbar, int event) {
+                    int id = position+1;
+                    if(event==Snackbar.Callback.DISMISS_EVENT_TIMEOUT){
+                        System.out.println("OK! " +id);
+                        new DBOrder().deleteOrderedFood(Common.currentTable, position+1);
+                    }
+                }
+            });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+    }
+
+
 }

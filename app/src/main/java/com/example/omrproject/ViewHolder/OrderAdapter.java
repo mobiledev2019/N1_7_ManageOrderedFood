@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -24,37 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-    public TextView order_item_name, order_item_price;
-    public ImageView img_order_count;
-
-    private ItemClickListener itemClickListener;
-
-    public void setOrder_item_name(TextView order_item_name) {
-        this.order_item_name = order_item_name;
-    }
-
-    public OrderViewHolder (View itemView){
-        super(itemView);
-
-        order_item_name = (TextView) itemView.findViewById(R.id.order_item_name);
-        order_item_price = (TextView) itemView.findViewById(R.id.order_item_price);
-        img_order_count = (ImageView) itemView.findViewById(R.id.img_order_count);
-
-        itemView.setOnClickListener(this);
-    }
 
 
-    @Override
-    public void onClick(View v) {
+public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder>{
 
-    }
-}
-
-public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder>{
-
-    private List<Order> listFoods = new ArrayList<>();
+    public List<Order> listFoods = new ArrayList<>();
     private Context context;
 
     public OrderAdapter(List<Order> listFoods, Context context){
@@ -85,5 +61,53 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder>{
     @Override
     public int getItemCount() {
         return listFoods.size();
+    }
+
+    public void removeItem(int position) {
+        listFoods.remove(position);
+        // notify the item removed by position
+        // to perform recycler view delete animations
+        // NOTE: don't call notifyDataSetChanged()
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(Order item, int position) {
+        listFoods.add(position, item);
+        // notify item added by position
+        notifyItemInserted(position);
+    }
+
+
+    public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+        public TextView order_item_name, order_item_price;
+        public ImageView img_order_count;
+
+        public RelativeLayout viewBackground, viewForeground;
+        private ItemClickListener itemClickListener;
+
+        public void setOrder_item_name(TextView order_item_name) {
+            this.order_item_name = order_item_name;
+
+
+        }
+
+        public OrderViewHolder (View itemView){
+            super(itemView);
+
+            order_item_name = (TextView) itemView.findViewById(R.id.order_item_name);
+            order_item_price = (TextView) itemView.findViewById(R.id.order_item_price);
+            img_order_count = (ImageView) itemView.findViewById(R.id.img_order_count);
+
+            viewBackground = itemView.findViewById(R.id.view_background);
+            viewForeground = itemView.findViewById(R.id.view_foreground);
+            itemView.setOnClickListener(this);
+        }
+
+
+        @Override
+        public void onClick(View v) {
+
+        }
     }
 }

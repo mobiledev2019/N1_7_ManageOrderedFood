@@ -5,6 +5,9 @@ import android.util.Log;
 
 import com.example.omrproject.Model.Order;
 import com.example.omrproject.Model.Table;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -112,6 +115,32 @@ public class DBOrder {
     public void deleteOrder(String tableId){
         unUsed(tableId);
         tables.child(tableId).child("foods").setValue(null);
+    }
+
+    public void deleteOrderedFood(final String tableId, int position){
+        tables.child(tableId).child("foods").child(position+"").setValue(null)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        tables.child(tableId).child("foods").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                //update
+                                int id = 1;
+                                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                                    tables.child(tableId).child("foods").child(id+"").setValue(snapshot.getValue(Order.class));
+                                    id++;
+                                    tables.child(tableId).child("foods").child(id+"").setValue(null);
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
+
     }
 
 

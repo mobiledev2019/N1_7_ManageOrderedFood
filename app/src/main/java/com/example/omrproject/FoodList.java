@@ -1,5 +1,6 @@
 package com.example.omrproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
@@ -63,7 +66,9 @@ public class FoodList extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
+        int resId = R.anim.layout_animation_right_to_left;
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(FoodList.this, resId);
+        recyclerView.setLayoutAnimation(animation);
         //Get itent
         if(getIntent()!=null){
             categoryId = getIntent().getStringExtra("categoryId");
@@ -71,6 +76,7 @@ public class FoodList extends AppCompatActivity {
         if(!categoryId.isEmpty()){
             loadListFood(categoryId);
         }
+
     }
 
     private void loadListFood(String categoryId){
@@ -114,7 +120,21 @@ public class FoodList extends AppCompatActivity {
                 View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.food_item, viewGroup, false);
                 return new FoodViewHolder(view);
             }
+
         };
-        recyclerView.setAdapter(adapter);
+//        recyclerView.setAdapter(adapter);
+        runLayoutAnimation(recyclerView, adapter);
     }
+
+    private void runLayoutAnimation(final RecyclerView recyclerView, FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_right_to_left);
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
+    }
+
 }

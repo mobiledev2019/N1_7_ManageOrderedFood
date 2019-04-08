@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,19 +8,44 @@
     app:cardElevation="4dp"
     android:background="@drawable/rectangle_rounded">
 
-    <LinearLayout
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_gravity="center_vertical"
-        android:orientation="horizontal"
+    <RelativeLayout
+        android:id="@+id/view_background"
+        android:paddingVertical="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@drawable/rectangle_rounded"
+        android:backgroundTint="@color/bg_row_background">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="9"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/delete_icon"
+            android:layout_width="@dimen/ic_delete"
+            android:layout_height="@dimen/ic_delete"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/padd_10"
+            android:src="@drawable/ic_delete_white_24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/padd_10"
+            android:layout_toLeftOf="@id/delete_icon"
+            android:text="@string/delete"
+            android:textColor="#fff"
+            android:textSize="13dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+
+        android:id="@+id/view_foreground"
+        android:paddingVertical="16dp"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_rounded">
+
 
             <TextView
                 android:id="@+id/order_item_name"
@@ -38,19 +63,20 @@
                 android:gravity="center_vertical|start"
                 android:textAllCaps="true"
                 android:textStyle="italic"
+                android:layout_below="@+id/order_item_name"
                 android:text="100, 000"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-        </LinearLayout>
         
         <ImageView
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="16dp"
+            android:layout_alignParentRight="true"
             android:id="@+id/img_order_count"
             android:layout_width="20dp"
             android:layout_height="20dp" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-</android.support.v7.widget.CardView>
+</FrameLayout>

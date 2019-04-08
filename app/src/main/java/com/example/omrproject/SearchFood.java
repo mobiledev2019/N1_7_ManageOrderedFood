@@ -1,5 +1,6 @@
 package com.example.omrproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -78,11 +81,14 @@ public class SearchFood extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         foodList = database.getReference("Foods");
         //RecyclerView
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_food);
+     recyclerView = (RecyclerView) findViewById(R.id.recycler_food);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
+        //animation
+        int resId = R.anim.layout_animation_right_to_left;
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(SearchFood.this, resId);
+        recyclerView.setLayoutAnimation(animation);
         //Get itent
         if(getIntent()!=null){
             searchMode = getIntent().getStringExtra("searchMode");
@@ -200,7 +206,8 @@ public class SearchFood extends AppCompatActivity {
         };
 
         searchAdapter.startListening();
-        recyclerView.setAdapter(searchAdapter);
+//        recyclerView.setAdapter(searchAdapter);
+        runLayoutAnimation(recyclerView, searchAdapter);
     }
 
     private void loadSuggest() {
@@ -262,6 +269,19 @@ public class SearchFood extends AppCompatActivity {
                 return new FoodViewHolder(view);
             }
         };
+//        recyclerView.setAdapter(adapter);
+        runLayoutAnimation(recyclerView, adapter);
+
+    }
+
+    private void runLayoutAnimation(final RecyclerView recyclerView, FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_right_to_left);
+
         recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
     }
 }
