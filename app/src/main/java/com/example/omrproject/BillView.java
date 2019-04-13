@@ -194,12 +194,14 @@ public class BillView extends AppCompatActivity {
                     )).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mDialog.dismiss();
+
                             Toast.makeText(BillView.this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
                             new DBOrder().deleteOrder(tableId);
                             Intent table = new Intent(BillView.this, SendBill.class);
                             startActivity(table);
                             finish();
+                            mDialog.dismiss();
+                            ad.dismiss();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

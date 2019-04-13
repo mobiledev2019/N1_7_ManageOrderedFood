@@ -1,15 +1,20 @@
 package com.example.omrproject;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,11 +49,13 @@ public class Home extends AppCompatActivity
     FirebaseDatabase database;
     DatabaseReference category;
 
+
     TextView txtFullName;
     RecyclerView recycler_menu;
     RecyclerView.LayoutManager layoutManager;
     FirebaseRecyclerAdapter<Category, MenuViewHolder> adapter;
 
+    Button btnNoSignOut, btnDoSignOut;
     String tableId = "";
 
     @Override
@@ -60,6 +68,7 @@ public class Home extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+
     }
 
     @Override
@@ -103,6 +112,49 @@ public class Home extends AppCompatActivity
 
     }
 
+    private void showSignOutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.alert_signout, null);
+        builder.setView(dialogView);
+
+        final AlertDialog alertDialog = builder.show();
+        btnNoSignOut = (Button) dialogView.findViewById(R.id.btnNoSignOut);
+        btnDoSignOut = (Button) dialogView.findViewById(R.id.btnDoSignOut);
+
+        btnDoSignOut.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent signIn = new Intent(Home.this, SignIn.class);
+                signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(signIn);
+                finish();
+                alertDialog.dismiss();
+            }
+        });
+        btnNoSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnNoSignOut.setTextColor(Color.parseColor("#ffffff"));
+                btnNoSignOut.getBackground().setColorFilter(Color.parseColor("#f17e7e"), PorterDuff.Mode.SRC_ATOP);
+                alertDialog.dismiss();
+            }
+        });
+
+        btnNoSignOut.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent event){
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    btnNoSignOut.setTextColor(Color.parseColor("#ffffff"));
+                    btnNoSignOut.getBackground().setColorFilter(Color.parseColor("#f17e7e"), PorterDuff.Mode.SRC_ATOP);
+                }
+                return false;
+            }
+        });
+
+    }
+
     private void loadMenu() {
 
         FirebaseRecyclerOptions<Category> options = new FirebaseRecyclerOptions.Builder<Category>().setQuery(category, Category.class).build();
@@ -143,10 +195,7 @@ public class Home extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
-//            Intent listOrders = new Intent (Home.this, ListOrder.class);
-//            startActivity(listOrders);
-//            finish();
+            showSignOutDialog();
         }
     }
 
@@ -177,9 +226,7 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_orders) {
 
         } else if(id == R.id.nav_log_out) {
-            Intent signIn = new Intent(Home.this, SignIn.class);
-            signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(signIn);
+            showSignOutDialog();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

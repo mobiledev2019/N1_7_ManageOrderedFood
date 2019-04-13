@@ -287,9 +287,12 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
         btnDoSignOut.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+
                 Intent signIn = new Intent(TableList.this, SignIn.class);
                 signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(signIn);
+                finish();
+                alertDialog.dismiss();
             }
         });
         btnNoSignOut.setOnClickListener(new View.OnClickListener() {

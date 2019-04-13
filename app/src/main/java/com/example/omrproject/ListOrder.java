@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
@@ -47,7 +48,7 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
     RecyclerView.LayoutManager layoutManager;
     OrderAdapter adapter;
     TextView txtTotalPrice;
-    Button btnOrder;
+    Button btnOrder, btnSearchById, btnCategory, btnSearchByName;
     Button btnPay;
     RelativeLayout relativeLayout;
     String tableId = "";
@@ -90,6 +91,7 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
                 public void onClick(View view){
                     Intent billIntent = new Intent(ListOrder.this, BillView.class);
                     startActivity(billIntent);
+                    finish();
                 }
             });
         }
@@ -109,36 +111,48 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
     }
 
     private void showOptionDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ListOrder.this);
-        alertDialog.setTitle("Tìm món");
-        alertDialog.setMessage("Chọn chế độ tìm món: ");
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ListOrder.this);
 
-        alertDialog.setPositiveButton("THEO TÊN", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
-                searchFood.putExtra("searchMode", "byname");
-                startActivity(searchFood);
-            }
-        });
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.alert_type_search, null);
+        alertDialog.setView(dialogView);
+        final AlertDialog ad = alertDialog.show();
 
-        alertDialog.setNeutralButton("DANH MỤC", new DialogInterface.OnClickListener() {
+        btnCategory = (Button) dialogView.findViewById(R.id.btnCategory);
+        btnSearchById = (Button) dialogView.findViewById(R.id.btnSearchById);
+        btnSearchByName = (Button) dialogView.findViewById(R.id.btnSearchByName);
+
+        btnCategory.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v){
                 Intent home = new Intent(ListOrder.this, Home.class);
                 startActivity(home);
+                finish();
+                ad.dismiss();
             }
         });
 
-        alertDialog.setNegativeButton("THEO MÃ", new DialogInterface.OnClickListener() {
+        btnSearchById.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v){
                 Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
                 searchFood.putExtra("searchMode", "byid");
                 startActivity(searchFood);
+                finish();
+                ad.dismiss();
             }
         });
-        alertDialog.show();
+
+        btnSearchByName.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
+                searchFood.putExtra("searchMode", "byname");
+                startActivity(searchFood);
+                finish();
+                ad.dismiss();
+            }
+        });
     }
 
     private void loadlistOrder(String tableId) {
@@ -162,12 +176,10 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
                     //if nothing, disable button pay
                     if(total==0){
                         btnPay.setEnabled(false);
-//                        btnPay.setBackgroundResource(R.drawable.btn_rounded_transparent);
                         btnPay.getBackground().setColorFilter(Color.parseColor("#aaaaaa"), PorterDuff.Mode.SRC_ATOP);
                     }
                     else{
                         btnPay.setEnabled(true);
-//                        btnPay.setBackgroundResource(R.drawable.btn_rounded_transparent);
                         btnPay.getBackground().setColorFilter(Color.parseColor("#f17e7e"), PorterDuff.Mode.SRC_ATOP);
                     }
                     //set total
