@@ -3,6 +3,7 @@ package com.example.omrproject;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -19,8 +20,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -47,6 +50,8 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
     TextView txtFullName;
     FloatingActionButton btnFilterTable;
 
+    Button btnNoSignOut;
+    Button btnDoSignOut;
     FirebaseDatabase database;
     DatabaseReference tables;
 
@@ -263,8 +268,50 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            showSignOutDialog();
         }
+
+    }
+
+    private void showSignOutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.alert_signout, null);
+        builder.setView(dialogView);
+
+        final AlertDialog alertDialog = builder.show();
+        btnNoSignOut = (Button) dialogView.findViewById(R.id.btnNoSignOut);
+        btnDoSignOut = (Button) dialogView.findViewById(R.id.btnDoSignOut);
+
+        btnDoSignOut.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent signIn = new Intent(TableList.this, SignIn.class);
+                signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(signIn);
+            }
+        });
+        btnNoSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnNoSignOut.setTextColor(Color.parseColor("#ffffff"));
+                btnNoSignOut.getBackground().setColorFilter(Color.parseColor("#f17e7e"), PorterDuff.Mode.SRC_ATOP);
+                alertDialog.dismiss();
+            }
+        });
+
+        btnNoSignOut.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent event){
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    btnNoSignOut.setTextColor(Color.parseColor("#ffffff"));
+                    btnNoSignOut.getBackground().setColorFilter(Color.parseColor("#f17e7e"), PorterDuff.Mode.SRC_ATOP);
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -292,9 +339,7 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
         } else if (id == R.id.nav_orders) {
 
         } else if(id == R.id.nav_log_out) {
-            Intent signIn = new Intent(TableList.this, SignIn.class);
-            signIn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(signIn);
+                showSignOutDialog();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_table);

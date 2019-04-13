@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Environment;
@@ -15,6 +17,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -69,6 +73,8 @@ public class BillView extends AppCompatActivity {
 
     List<Order> listFoods = new ArrayList<>();
     BillAdapter adapter;
+
+    Button btnCancelPay, btnDoPay;
 
     private static final String LOG_TAG = BillView.class.getSimpleName();
     String tableId = "";
@@ -160,11 +166,19 @@ public class BillView extends AppCompatActivity {
 
     private void showAlertDialog(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(BillView.this);
-        alertDialog.setTitle("Xác nhận");
-        alertDialog.setMessage("Bạn sẽ chịu trách nghiệm nếu hóa đơn bị sai lệch");
-        alertDialog.setPositiveButton("Chấp nhận", new DialogInterface.OnClickListener() {
+
+        LayoutInflater inflater = BillView.this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.alert_confirm_pay, null);
+        alertDialog.setView(dialogView);
+        final AlertDialog ad = alertDialog.show();
+
+
+        btnCancelPay = (Button) ad.findViewById(R.id.btnCancelPay);
+        btnDoPay = (Button) ad.findViewById(R.id.btnDoPay);
+
+        btnDoPay.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view){
                 final ProgressDialog mDialog = new ProgressDialog(BillView.this);
                 mDialog.setMessage("Đang xử lý, vui lòng chờ....");
                 mDialog.show();
@@ -184,7 +198,6 @@ public class BillView extends AppCompatActivity {
                             Toast.makeText(BillView.this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
                             new DBOrder().deleteOrder(tableId);
                             Intent table = new Intent(BillView.this, SendBill.class);
-//                            table.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(table);
                             finish();
                         }
@@ -199,20 +212,33 @@ public class BillView extends AppCompatActivity {
                 }
             }
         });
-        alertDialog.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+
+        btnCancelPay.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void onClick(View view){
+                ad.dismiss();
             }
         });
-        alertDialog.show();
+
+        btnCancelPay.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent event){
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    btnCancelPay.setTextColor(Color.parseColor("#ffffff"));
+                    btnCancelPay.getBackground().setColorFilter(Color.parseColor("#f17e7e"), PorterDuff.Mode.SRC_ATOP);
+                }
+                return false;
+            }
+        });
     }
 
     private void createPdf(){
         Document document = new Document();
         try{
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ORMApp";
-            System.out.println(path);
+//            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ORMApp";
+            String path = BillView.this.getFilesDir() + "/ORMApp";
+            Toast.makeText(BillView.this, "File pdf created in " + path, Toast.LENGTH_SHORT).show();
+
 
             File dir = new File(path);
             if(!dir.exists()) dir.mkdir();

@@ -33,7 +33,7 @@ public class SendBill extends AppCompatActivity {
         if (btAdapter == null) {
             Toast.makeText(this, "Device not support bluetooth", Toast.LENGTH_LONG).show();
         } else {
-            enableBluetooth();
+            if(!btAdapter.isEnabled()) enableBluetooth();
         }
     }
 

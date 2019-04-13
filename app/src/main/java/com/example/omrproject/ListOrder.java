@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
@@ -161,13 +162,13 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
                     //if nothing, disable button pay
                     if(total==0){
                         btnPay.setEnabled(false);
-                        btnPay.setBackgroundResource(R.drawable.rectangle_rounded);
-                        btnPay.setBackgroundColor(Color.parseColor("#aaaaaa"));
+//                        btnPay.setBackgroundResource(R.drawable.btn_rounded_transparent);
+                        btnPay.getBackground().setColorFilter(Color.parseColor("#aaaaaa"), PorterDuff.Mode.SRC_ATOP);
                     }
                     else{
                         btnPay.setEnabled(true);
-                        btnPay.setBackgroundResource(R.drawable.rectangle_rounded);
-                        btnPay.setBackgroundColor(Color.parseColor("#f17e7e"));
+//                        btnPay.setBackgroundResource(R.drawable.btn_rounded_transparent);
+                        btnPay.getBackground().setColorFilter(Color.parseColor("#f17e7e"), PorterDuff.Mode.SRC_ATOP);
                     }
                     //set total
                     Locale locale = new Locale ("en", "US");

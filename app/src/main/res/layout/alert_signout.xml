@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OMR MESS"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:padding="8dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bạn có chắc chắn muốn đăng xuất không?"
+        android:textStyle="italic"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:background="@android:color/white"
+        android:padding="8dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:background="#f2f2f2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:id="@+id/btnNoSignOut"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginVertical="8dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/btn_rounded_transparent"
+                android:backgroundTint="@color/white"
+                android:text="KHÔNG"
+                android:textColor="#f17e7e"
+                android:textStyle="bold"
+                />
+            <Button
+                android:id="@+id/btnDoSignOut"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginVertical="8dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/btn_rounded_transparent"
+                android:backgroundTint="@color/flatBtnColor"
+                android:text="CÓ"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>
