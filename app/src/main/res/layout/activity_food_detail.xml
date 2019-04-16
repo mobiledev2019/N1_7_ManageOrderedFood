@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/test3"
-    tools:context=".FoodDetail">
+    tools:context=".FoodDetail"
+    android:id="@+id/layout_fooddetail">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"

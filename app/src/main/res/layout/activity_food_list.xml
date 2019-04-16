@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FoodList"
+    android:id="@+id/relative_list_food"
    >
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_food"
+        android:layout_marginTop="8dp"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

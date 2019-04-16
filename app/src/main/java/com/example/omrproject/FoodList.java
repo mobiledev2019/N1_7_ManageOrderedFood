@@ -2,7 +2,9 @@ package com.example.omrproject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
@@ -37,6 +40,7 @@ public class FoodList extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference foodList;
 
+    RelativeLayout relativeLayout;
     String categoryId="";
 
     FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter;
@@ -61,6 +65,8 @@ public class FoodList extends AppCompatActivity {
         // Init database
         database = FirebaseDatabase.getInstance();
         foodList = database.getReference("Foods");
+        relativeLayout = (RelativeLayout) findViewById(R.id.relative_list_food);
+
         //RecyclerView
         recyclerView = (RecyclerView) findViewById(R.id.recycler_food);
         recyclerView.setHasFixedSize(true);
@@ -90,14 +96,22 @@ public class FoodList extends AppCompatActivity {
                 holder.btnAddFood.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v){
-                        new DBOrder().addOrder(Common.currentTable,new Order(
-                                adapter.getRef(position).getKey(),
-                                model.getName(),
-                                numberButton.getNumber(),
-                                model.getPrice(),
-                                model.getDiscount()
-                        ));
-                        Toast.makeText(FoodList.this, "Thêm" + model.getName() + "x" + numberButton.getNumber(), Toast.LENGTH_SHORT).show();
+                        try{
+                            new DBOrder().addOrder(Common.currentTable,new Order(
+                                    adapter.getRef(position).getKey(),
+                                    model.getName(),
+                                    numberButton.getNumber(),
+                                    model.getPrice(),
+                                    model.getDiscount()
+                            ));
+                        }catch(Exception ex){
+                            ex.printStackTrace();
+                        }finally{
+                            showSnackBar("Thêm" + model.getName() + "x" + numberButton.getNumber()+". Xem danh sách món ăn đã đặt?");
+                        }
+
+//                        showSnackBar("Thêm" + model.getName() + "x" + numberButton.getNumber()+". Xem danh sách món ăn đã đặt?");
+//                        Toast.makeText(FoodList.this, "Thêm" + model.getName() + "x" + numberButton.getNumber(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 Picasso.with(getBaseContext()).load(model.getImg()).into(holder.food_img);
@@ -126,6 +140,25 @@ public class FoodList extends AppCompatActivity {
         runLayoutAnimation(recyclerView, adapter);
     }
 
+    private void showSnackBar(String notify) {
+        final Snackbar snackbar = Snackbar
+                .make(relativeLayout, notify, Snackbar.LENGTH_LONG);
+        snackbar.setAction("TỚI", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // undo is selected, restore the deleted item
+                Intent listOrder = new Intent(FoodList.this, ListOrder.class);
+                listOrder.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(listOrder);
+                finish();
+                snackbar.dismiss();
+
+            }
+        });
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
+    }
+
     private void runLayoutAnimation(final RecyclerView recyclerView, FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter) {
         final Context context = recyclerView.getContext();
         final LayoutAnimationController controller =
@@ -136,5 +169,7 @@ public class FoodList extends AppCompatActivity {
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
     }
+
+
 
 }

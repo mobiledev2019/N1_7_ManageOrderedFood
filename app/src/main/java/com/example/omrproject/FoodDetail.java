@@ -1,14 +1,18 @@
 package com.example.omrproject;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +41,7 @@ public class FoodDetail extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference foods;
 
+    CoordinatorLayout layout_fooddetail;
     Food currentFood;
     String tableId = "";
     @Override
@@ -49,6 +54,7 @@ public class FoodDetail extends AppCompatActivity {
         foods = database.getReference("Foods");
 
         //Init view;
+        layout_fooddetail = (CoordinatorLayout) findViewById(R.id.layout_fooddetail);
         numberButton = (ElegantNumberButton) findViewById(R.id.number_button);
         btnCart = (FloatingActionButton) findViewById(R.id.btnCart);
 
@@ -63,7 +69,8 @@ public class FoodDetail extends AppCompatActivity {
                         currentFood.getPrice(),
                         currentFood.getDiscount()
                 ));
-                Toast.makeText(FoodDetail.this, "Thêm " + currentFood.getName() + "x" + numberButton.getNumber(), Toast.LENGTH_SHORT).show();
+                showSnackBar("Thêm" + currentFood.getName() + "x" + numberButton.getNumber()+". Xem danh sách món ăn đã đặt?");
+//                Toast.makeText(FoodDetail.this, "Thêm" + currentFood.getName() + "x" + numberButton.getNumber()+". Xem danh sách món ăn đã đặt?", Toast.LENGTH_SHORT).show();
             }
         });
         food_description = (TextView) findViewById(R.id.food_description);
@@ -104,5 +111,24 @@ public class FoodDetail extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void showSnackBar(String notify) {
+        final Snackbar snackbar = Snackbar
+                .make(layout_fooddetail, notify, Snackbar.LENGTH_LONG);
+        snackbar.setAction("TỚI", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // undo is selected, restore the deleted item
+                Intent listOrder = new Intent(FoodDetail.this, ListOrder.class);
+                listOrder.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(listOrder);
+                finish();
+                snackbar.dismiss();
+
+            }
+        });
+        snackbar.setActionTextColor(Color.YELLOW);
+        snackbar.show();
     }
 }
