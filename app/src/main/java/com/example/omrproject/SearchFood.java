@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -204,7 +205,10 @@ public class SearchFood extends AppCompatActivity {
                 return new FoodViewHolder(view);
             }
         };
-
+        //hide keyboard
+        View v = getCurrentFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(SearchFood.this.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         searchAdapter.startListening();
 //        recyclerView.setAdapter(searchAdapter);
         runLayoutAnimation(recyclerView, searchAdapter);
