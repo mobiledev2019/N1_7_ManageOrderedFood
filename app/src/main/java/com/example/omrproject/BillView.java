@@ -2,6 +2,7 @@ package com.example.omrproject;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,7 +66,7 @@ public class BillView extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
 
-    TextView txtBillId, txtBillTable, txtCreatedBill, txtTotalBill, txtStaffName;
+    TextView txtBillId, txtBillTable, txtCreatedBill, txtTotalBill, txtStaffName, txtSendTitle;
     Button btnConfirmPay;
 
     FirebaseDatabase database;
@@ -74,11 +75,13 @@ public class BillView extends AppCompatActivity {
     List<Order> listFoods = new ArrayList<>();
     BillAdapter adapter;
 
-    Button btnCancelPay, btnDoPay;
+    Button btnCancelPay, btnDoPay, btnCancelSending, btnSending, btnPrintBill;
+    BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
     private static final String LOG_TAG = BillView.class.getSimpleName();
     String tableId = "";
     String createdTime = "";
+    String path = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,12 +197,8 @@ public class BillView extends AppCompatActivity {
                     )).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-
                             Toast.makeText(BillView.this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
                             new DBOrder().deleteOrder(tableId);
-                            Intent table = new Intent(BillView.this, SendBill.class);
-                            startActivity(table);
-                            finish();
                             mDialog.dismiss();
                             ad.dismiss();
                         }
@@ -236,14 +235,15 @@ public class BillView extends AppCompatActivity {
 
     private void createPdf(){
         Document document = new Document();
+
         try{
-//            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ORMApp";
-            String path = BillView.this.getFilesDir() + "/ORMApp";
-            Toast.makeText(BillView.this, "File pdf created in " + path, Toast.LENGTH_SHORT).show();
+            path = Environment.getExternalStorageDirectory() + "/ORMApp";
+//            String path = BillView.this.getFilesDir() + "/ORMApp";
+
 
 
             File dir = new File(path);
-            if(!dir.exists()) dir.mkdir();
+            if(!dir.exists()) dir.mkdirs();
 
             File bill = new File(dir, "bill.pdf");
 
@@ -260,18 +260,18 @@ public class BillView extends AppCompatActivity {
 
             //text color
             BaseColor mColorAccent = new BaseColor(0, 153, 204, 255);
-            float mHeadingFontSize = 20.0f;
-            float mValueFontSize = 26.0f;
+            float mHeadingFontSize = 26.0f;
+            float mValueFontSize = 20.0f;
 
             //Font
-            BaseFont urName = BaseFont.createFont(BaseFont.HELVETICA, "UTF-8", BaseFont.EMBEDDED);
+            BaseFont urName = BaseFont.createFont("assets/fonts/Roboto.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             // LINE SEPARATOR
             LineSeparator lineSeparator = new LineSeparator();
             lineSeparator.setLineColor(new BaseColor(0, 0, 0, 68));
 
             // Title Order Details...
             // Adding Title....
-            Font mOrderDetailsTitleFont = new Font(urName, 36.0f, Font.NORMAL, BaseColor.BLACK);
+            Font mOrderDetailsTitleFont = new Font(urName, 36.0f);
             // Creating Chunk
             Chunk mOrderDetailsTitleChunk = new Chunk("HÓA ĐƠN", mOrderDetailsTitleFont);
             // Creating Paragraph to add...
@@ -339,7 +339,8 @@ public class BillView extends AppCompatActivity {
             for (Order food: listFoods){
 
                 Chunk glue = new Chunk(new VerticalPositionMark());
-                Paragraph p = new Paragraph(food.getFoodName());
+                Chunk foodNameChunk= new Chunk(food.getFoodName(), mOrderValueFont);
+                Paragraph p = new Paragraph(foodNameChunk);
                 p.add(new Chunk(glue));
                 p.add("("+food.getDiscount()+"%)");
                 Paragraph p1 = new Paragraph(food.getQuantity()+"*"+food.getPrice());
@@ -357,15 +358,15 @@ public class BillView extends AppCompatActivity {
             Chunk glue = new Chunk(new VerticalPositionMark());
 
             //Tổng hóa đơn
-            Paragraph p = new Paragraph("Tổng: ");
-            p.setFont(mOrderTitleFont);
+            Chunk totalTitleChunk= new Chunk("Tổng", mOrderValueFont);
+            Paragraph p = new Paragraph(totalTitleChunk);
             p.add(new Chunk(glue));
             p.add(txtTotalBill.getText().toString());
             document.add(p);
 
             //Nhân viên
-            Paragraph p1 = new Paragraph("Nhân viên quầy ");
-            p1.setFont(mOrderTitleFont);
+            Chunk staffNameTitleChunk= new Chunk("Nhân viên quầy ", mOrderValueFont);
+            Paragraph p1 = new Paragraph(staffNameTitleChunk);
             p1.add(new Chunk(glue));
             p1.add(txtStaffName.getText().toString());
             document.add(p1);
@@ -377,7 +378,78 @@ public class BillView extends AppCompatActivity {
         }
         finally
         {
+            showAlertSendBill();
             document.close();
         }
+    }
+
+    private void showAlertSendBill() {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(BillView.this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.alert_send_bill, null);
+        alertDialog.setView(dialogView);
+        final AlertDialog ad = alertDialog.show();
+
+        txtSendTitle = (TextView) dialogView.findViewById(R.id.txtSendTitle);
+        btnCancelSending = (Button) dialogView.findViewById(R.id.btnCancelSending);
+        btnSending = (Button) dialogView.findViewById(R.id.btnSending);
+        btnPrintBill = (Button) dialogView.findViewById(R.id.btnPrintBill);
+
+        txtSendTitle.setText("Bản sao hóa đơn được lưu tại thư mục: " + path);
+        ad.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                Intent tableList = new Intent(BillView.this, TableList.class);
+                tableList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(tableList);
+                finish();
+                ad.dismiss();
+            }
+        });
+        btnCancelSending.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent tableList = new Intent(BillView.this, TableList.class);
+                tableList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(tableList);
+                finish();
+                ad.dismiss();
+            }
+        });
+
+        btnSending.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if (btAdapter == null) {
+                    Toast.makeText(BillView.this, "Device not support bluetooth", Toast.LENGTH_LONG).show();
+                } else {
+                    String path = Environment.getExternalStorageDirectory() + "/ORMApp";
+                    File dir = new File(path);
+                    dir.mkdirs();
+
+                    File bill = new File(dir, "bill.pdf");
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(bill));
+                    startActivity(intent);
+                    finish();
+                    ad.dismiss();
+                }
+            }
+        });
+
+        btnPrintBill.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Toast.makeText(BillView.this, "Feature is not available!", Toast.LENGTH_SHORT).show();
+                Intent tableList = new Intent(BillView.this, TableList.class);
+                tableList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(tableList);
+                finish();
+                ad.dismiss();
+            }
+        });
     }
 }

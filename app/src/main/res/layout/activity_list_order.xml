@@ -16,7 +16,7 @@
         android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layoutAnimation="@anim/layout_animation_right_to_left"/>
+        />
     
     <android.support.v7.widget.CardView
         android:layout_alignParentBottom="true"

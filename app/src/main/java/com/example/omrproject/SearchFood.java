@@ -269,7 +269,6 @@ public class SearchFood extends AppCompatActivity {
                 return new FoodViewHolder(view);
             }
         };
-//        recyclerView.setAdapter(adapter);
         runLayoutAnimation(recyclerView, adapter);
 
     }

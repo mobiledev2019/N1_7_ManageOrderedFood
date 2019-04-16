@@ -8,16 +8,17 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="OMR MESS"
+        android:text="XUẤT HÓA ĐƠN"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="@android:color/white"
         android:background="@color/colorPrimary"
         android:padding="8dp"/>
     <TextView
+        android:id="@+id/txtSendTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bạn sẽ chịu trách nghiệm nếu hóa đơn bị sai lệch?"
+        android:text="Hóa đơn đã sẵn sàng để gửi"
         android:gravity="center"
         android:textStyle="italic"
         android:textSize="16sp"
@@ -34,23 +35,20 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.4"></LinearLayout>
+            android:layout_weight="0.5"
+            android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.6"
-            android:orientation="horizontal"
-            >
+
+
             <Button
-                android:id="@+id/btnCancelPay"
+                android:id="@+id/btnCancelSending"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:layout_weight="0.4"
+                android:layout_weight="0.5"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_marginVertical="8dp"
+                android:paddingLeft="8dp"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/btn_rounded_transparent"
                 android:backgroundTint="@color/white"
@@ -58,20 +56,50 @@
                 android:textColor="#f17e7e"
                 android:textStyle="bold"
                 />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"></LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"
+            >
             <Button
-                android:id="@+id/btnDoPay"
+                android:id="@+id/btnSending"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6"
-                android:textSize="14sp"
-                android:padding="4dp"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginVertical="8dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/btn_rounded_transparent"
+                android:drawableLeft="@drawable/ic_send_black_24dp"
+                android:paddingLeft="8dp"
+                android:backgroundTint="#F17E7E"
+                android:text="GỬI"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                />
+            <Button
+                android:id="@+id/btnPrintBill"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginVertical="8dp"
                 android:layout_alignParentBottom="true"
+                android:drawableLeft="@drawable/ic_print_white_24dp"
+                android:paddingLeft="8dp"
                 android:background="@drawable/btn_rounded_transparent"
                 android:backgroundTint="@color/flatBtnColor"
-                android:text="CHẤP NHẬN"
+                android:text="IN"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 />

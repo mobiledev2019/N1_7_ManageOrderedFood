@@ -7,7 +7,10 @@
     android:orientation="vertical"
     android:weightSum="4"
     android:background="@drawable/test2"
-    tools:context=".SignIn">
+    tools:context=".SignIn"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,7 +69,6 @@
                 android:id="@+id/edtPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:text="123456"
@@ -85,7 +87,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
 

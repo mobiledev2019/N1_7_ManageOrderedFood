@@ -127,7 +127,6 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
             public void onClick(View v){
                 Intent home = new Intent(ListOrder.this, Home.class);
                 startActivity(home);
-                finish();
                 ad.dismiss();
             }
         });
@@ -138,7 +137,6 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
                 Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
                 searchFood.putExtra("searchMode", "byid");
                 startActivity(searchFood);
-                finish();
                 ad.dismiss();
             }
         });
@@ -149,7 +147,6 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
                 Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
                 searchFood.putExtra("searchMode", "byname");
                 startActivity(searchFood);
-                finish();
                 ad.dismiss();
             }
         });
@@ -197,15 +194,6 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
 
     }
 
-//    private void runLayoutAnimation(final RecyclerView recyclerView, OrderAdapter adapter) {
-//        final Context context = recyclerView.getContext();
-//        final LayoutAnimationController controller =
-//                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_right_to_left);
-//        recyclerView.setAdapter(adapter);
-//        recyclerView.setLayoutAnimation(controller);
-//        recyclerView.getAdapter().notifyDataSetChanged();
-//        recyclerView.scheduleLayoutAnimation();
-//    }
 
     @Override
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, final int position) {

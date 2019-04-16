@@ -2,11 +2,15 @@ package com.example.omrproject;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import java.io.File;
 
 public class SendBill extends AppCompatActivity {
     
@@ -30,16 +34,29 @@ public class SendBill extends AppCompatActivity {
     }
 
     private void sendPdf() {
+
         if (btAdapter == null) {
             Toast.makeText(this, "Device not support bluetooth", Toast.LENGTH_LONG).show();
         } else {
-            if(!btAdapter.isEnabled()) enableBluetooth();
+                String path = Environment.getExternalStorageDirectory() + "/ORMApp";
+                File dir = new File(path);
+                dir.mkdirs();
+
+                File bill = new File(dir, "bill.pdf");
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(bill));
+                startActivity(intent);
         }
     }
 
     public void enableBluetooth() {
-        Intent discoveryIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoveryIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVER_DURATION);
-        startActivityForResult(discoveryIntent, REQUEST_BLU);
+//        Intent discoveryIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+//        discoveryIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVER_DURATION);
+//        startActivityForResult(discoveryIntent, REQUEST_BLU);
+        Intent intentOpenBluetoothSettings = new Intent();
+        intentOpenBluetoothSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+        startActivity(intentOpenBluetoothSettings);
     }
 }
