@@ -120,7 +120,7 @@ public class BillView extends AppCompatActivity {
 
         //format date
         createdTime = System.currentTimeMillis()+"";
-        String dateFormat = "dd/MM/yyyy hh:mm";
+        String dateFormat = "dd/MM/yyyy HH:mm";
         SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
 
         //set value
@@ -206,6 +206,7 @@ public class BillView extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            mDialog.dismiss();
                             Toast.makeText(BillView.this, "Thanh toán thất bại!", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -272,7 +273,7 @@ public class BillView extends AppCompatActivity {
 
             // Title Order Details...
             // Adding Title....
-            Font mOrderDetailsTitleFont = new Font(urName, 36.0f);
+            Font mOrderDetailsTitleFont = new Font(urName, 36.0f, Font.NORMAL, BaseColor.BLACK);
             // Creating Chunk
             Chunk mOrderDetailsTitleChunk = new Chunk("HÓA ĐƠN", mOrderDetailsTitleFont);
             // Creating Paragraph to add...
