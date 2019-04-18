@@ -201,6 +201,7 @@ public class BillView extends AppCompatActivity {
                             new DBOrder().deleteOrder(tableId);
                             mDialog.dismiss();
                             ad.dismiss();
+                            showAlertSendBill();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -378,7 +379,6 @@ public class BillView extends AppCompatActivity {
         }
         finally
         {
-            showAlertSendBill();
             document.close();
         }
     }

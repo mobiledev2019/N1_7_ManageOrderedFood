@@ -166,7 +166,8 @@ public class SearchFood extends AppCompatActivity {
     private void startSearch(CharSequence text) {
         FirebaseRecyclerOptions<Food> options;
         if(searchMode.equalsIgnoreCase("byname")){
-           options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByChild("name").startAt(text.toString().substring(0,1).toUpperCase()+text.toString().substring(1)).endAt(text.toString()+"\uf8ff"), Food.class).build();
+            String query = text.toString().substring(0,1).toUpperCase()+text.toString().substring(1);
+           options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByChild("name").startAt(query).endAt(query+"\uf8ff"), Food.class).build();
         }
         else{
            options = new FirebaseRecyclerOptions.Builder<Food>().setQuery(foodList.orderByKey().equalTo(text.toString()), Food.class).build();

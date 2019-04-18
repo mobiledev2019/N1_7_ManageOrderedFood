@@ -41,7 +41,7 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final ProgressDialog mDialog = new ProgressDialog(SignIn.this);
-                mDialog.setMessage("Please waiting....");
+                mDialog.setMessage("Đang đăng nhập....");
                 mDialog.show();
 
                 table_staff.addValueEventListener(new ValueEventListener() {
