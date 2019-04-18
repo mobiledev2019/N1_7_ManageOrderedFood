@@ -7,4 +7,5 @@ public class Common {
     public static String currentStaffId;
     public static Staff currentStaff;
     public static String currentTable;
+    public static String currentCategory;
 }

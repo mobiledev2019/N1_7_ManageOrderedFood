@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
@@ -61,6 +62,8 @@ public class SearchFood extends AppCompatActivity {
 
     MaterialSearchBar materialSearchBar;
 
+
+    LayoutAnimationController animation;
     @Override
     protected void onStart() {
         super.onStart();
@@ -82,7 +85,7 @@ public class SearchFood extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         foodList = database.getReference("Foods");
         //RecyclerView
-     recyclerView = (RecyclerView) findViewById(R.id.recycler_food);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_food);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -128,6 +131,7 @@ public class SearchFood extends AppCompatActivity {
                             }
                         }
                     }
+                    if(suggest.size()==0) suggest.add("Không tìm thấy món ăn!");
                     materialSearchBar.setLastSuggestions(suggest);
             }
 
@@ -209,9 +213,10 @@ public class SearchFood extends AppCompatActivity {
         View v = getCurrentFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(SearchFood.this.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        searchAdapter.startListening();
+
 //        recyclerView.setAdapter(searchAdapter);
         runLayoutAnimation(recyclerView, searchAdapter);
+        searchAdapter.startListening();
     }
 
     private void loadSuggest() {
@@ -273,6 +278,7 @@ public class SearchFood extends AppCompatActivity {
                 return new FoodViewHolder(view);
             }
         };
+
         runLayoutAnimation(recyclerView, adapter);
 
     }
@@ -284,7 +290,7 @@ public class SearchFood extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutAnimation(controller);
-        recyclerView.getAdapter().notifyDataSetChanged();
+//        recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
     }
 }

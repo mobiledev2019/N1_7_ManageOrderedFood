@@ -28,7 +28,13 @@
         </activity>
         <activity android:name=".ListOrder" />
         <activity android:name=".TableList" />
-        <activity android:name=".FoodDetail" />
+        <activity android:name=".FoodDetail"
+            android:parentActivityName=".FoodList">
+            >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FoodList"></meta-data>
+
+        </activity>
         <activity android:name=".FoodList" />
         <activity
             android:name=".Home"

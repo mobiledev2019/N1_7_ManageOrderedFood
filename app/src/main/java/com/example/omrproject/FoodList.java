@@ -76,9 +76,10 @@ public class FoodList extends AppCompatActivity {
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(FoodList.this, resId);
         recyclerView.setLayoutAnimation(animation);
         //Get itent
-        if(getIntent()!=null){
-            categoryId = getIntent().getStringExtra("categoryId");
-        }
+//        if(getIntent()!=null){
+//            categoryId = getIntent().getStringExtra("categoryId");
+//        }
+        categoryId = Common.currentCategory;
         if(!categoryId.isEmpty()){
             loadListFood(categoryId);
         }

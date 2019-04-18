@@ -53,6 +53,7 @@ public class FoodDetail extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         foods = database.getReference("Foods");
 
+
         //Init view;
         layout_fooddetail = (CoordinatorLayout) findViewById(R.id.layout_fooddetail);
         numberButton = (ElegantNumberButton) findViewById(R.id.number_button);
@@ -82,6 +83,11 @@ public class FoodDetail extends AppCompatActivity {
         collapsingToolbarLayout.setExpandedTitleColor(R.style.ExpandedAppBar);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapseAppBar);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_food_detail);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         //Get FoodId
 
         if(getIntent()!=null){
@@ -100,7 +106,7 @@ public class FoodDetail extends AppCompatActivity {
 
                 //Set image
                 Picasso.with(getBaseContext()).load(currentFood.getImg()).into(food_img);
-                collapsingToolbarLayout.setTitle(currentFood.getName());
+//                collapsingToolbarLayout.setTitle(currentFood.getName());
                 food_price.setText(currentFood.getPrice());
                 food_name.setText(currentFood.getName());
                 food_description.setText(currentFood.getDescription());

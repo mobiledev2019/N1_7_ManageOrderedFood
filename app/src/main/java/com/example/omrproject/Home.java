@@ -171,6 +171,7 @@ public class Home extends AppCompatActivity
                             // Get categoryId and send to FoodlistActivity
                             Intent foodList = new Intent (Home.this, FoodList.class);
                             // Get key of this item
+                            Common.currentCategory = adapter.getRef(position).getKey();
                             foodList.putExtra("categoryId" , adapter.getRef(position).getKey());
                             startActivity(foodList);
                         }

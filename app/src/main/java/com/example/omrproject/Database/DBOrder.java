@@ -57,7 +57,9 @@ public class DBOrder {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Table table = dataSnapshot.getValue(Table.class);
                     String newTCS = table.getType() + table.getNumberOfSeat() + "1";
+                    String newCS = table.getNumberOfSeat() + "1";
                     dataSnapshot.getRef().child("typeCapSt").setValue(newTCS);
+                    dataSnapshot.getRef().child("capSt").setValue(newCS);
             }
 
             @Override
@@ -73,7 +75,9 @@ public class DBOrder {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Table table = dataSnapshot.getValue(Table.class);
                 String newTCS = table.getType() + table.getNumberOfSeat() + "0";
+                String newCS = table.getNumberOfSeat() + "0";
                 dataSnapshot.getRef().child("typeCapSt").setValue(newTCS);
+                dataSnapshot.getRef().child("capSt").setValue(newCS);
             }
 
             @Override
@@ -119,28 +123,31 @@ public class DBOrder {
 
     public void deleteOrderedFood(final String tableId, int position){
         tables.child(tableId).child("foods").child(position+"").setValue(null)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                tables.child(tableId).child("foods").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        tables.child(tableId).child("foods").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                //update
-                                int id = 1;
-                                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                                    tables.child(tableId).child("foods").child(id+"").setValue(snapshot.getValue(Order.class));
-                                    id++;
-                                    tables.child(tableId).child("foods").child(id+"").setValue(null);
-                                }
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //update
+                        int id = 1;
+                        if(dataSnapshot.getChildrenCount()==0){
+                            unUsed(tableId);
+                            return;
+                        }
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            tables.child(tableId).child("foods").child(id+"").setValue(snapshot.getValue(Order.class));
+                            id++;
+                            tables.child(tableId).child("foods").child(id+"").setValue(null);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
                     }
                 });
-
+            }
+        });
     }
 
 
