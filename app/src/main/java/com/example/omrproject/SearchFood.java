@@ -17,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
@@ -59,7 +60,7 @@ public class SearchFood extends AppCompatActivity {
     FirebaseRecyclerAdapter<Food, FoodViewHolder> searchAdapter;
     List<String> suggestList = new ArrayList<>();
     Map<String, String> suggestListById = new HashMap<>();
-
+    ImageView imgCancelSearchFoodView;
     MaterialSearchBar materialSearchBar;
 
 
@@ -89,6 +90,14 @@ public class SearchFood extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+        imgCancelSearchFoodView = (ImageView) findViewById(R.id.img_cancel_search_food_view);
+        imgCancelSearchFoodView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                SearchFood.super.onBackPressed();
+            }
+        });
         //animation
         int resId = R.anim.layout_animation_right_to_left;
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(SearchFood.this, resId);
@@ -215,8 +224,8 @@ public class SearchFood extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(SearchFood.this.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
-//        recyclerView.setAdapter(searchAdapter);
-        runLayoutAnimation(recyclerView, searchAdapter);
+        recyclerView.setAdapter(searchAdapter);
+//        runLayoutAnimation(recyclerView, searchAdapter);
         searchAdapter.startListening();
     }
 
@@ -279,8 +288,8 @@ public class SearchFood extends AppCompatActivity {
                 return new FoodViewHolder(view);
             }
         };
-
-        runLayoutAnimation(recyclerView, adapter);
+        recyclerView.setAdapter(adapter);
+//        runLayoutAnimation(recyclerView, adapter);
 
     }
 
@@ -293,5 +302,11 @@ public class SearchFood extends AppCompatActivity {
         recyclerView.setLayoutAnimation(controller);
 //        recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.hold, R.anim.slide_out_down);
     }
 }

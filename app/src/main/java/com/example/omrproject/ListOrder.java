@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,7 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
     String tableId = "";
     boolean remove = true;
 
+    FloatingActionButton btnQuickOrder;
     FirebaseDatabase database;
     DatabaseReference tables;
 
@@ -72,10 +74,10 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
         tables = database.getReference("Tables");
 
         //init
-        relativeLayout = (RelativeLayout) findViewById(R.id.relative_list_order);
         txtTotalPrice = (TextView) findViewById(R.id.total_price);
         btnOrder = (Button) findViewById(R.id.btnOrder);
         btnPay = (Button) findViewById(R.id.btnPay);
+        btnQuickOrder = (FloatingActionButton) findViewById(R.id.btn_quick_order);
 
         tableId = Common.currentTable;
         //set event for button
@@ -92,6 +94,15 @@ public class ListOrder extends AppCompatActivity implements RecyclerItemTouchHel
                     Intent billIntent = new Intent(ListOrder.this, BillView.class);
                     startActivity(billIntent);
                     finish();
+                }
+            });
+            btnQuickOrder.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    Intent searchFood = new Intent(ListOrder.this, SearchFood.class);
+                    searchFood.putExtra("searchMode", "byname");
+                    startActivity(searchFood);
+                    overridePendingTransition( R.anim.slide_in_up, R.anim.hold);
                 }
             });
         }

@@ -13,5 +13,6 @@
     <color name="editText">#80FFFFFF</color>
     <color name="flatBtnColor">#47D476</color>
     <color name="bg_row_background">#fa315b</color>
-
+    <color name="info_title">#aaaaaa</color>
+    <color name="info_value">#ffffff</color>
 </resources>

@@ -46,5 +46,6 @@ dependencies {
     //create pdf
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

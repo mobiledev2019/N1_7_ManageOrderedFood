@@ -338,7 +338,8 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
         if (id == R.id.nav_menu) {
 
         } else if (id == R.id.nav_cart) {
-
+            Intent statisticIntent = new Intent(TableList.this, Statistic.class);
+            startActivity(statisticIntent);
         } else if (id == R.id.nav_orders) {
 
         } else if(id == R.id.nav_log_out) {

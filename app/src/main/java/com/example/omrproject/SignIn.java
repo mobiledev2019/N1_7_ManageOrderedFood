@@ -55,6 +55,7 @@ public class SignIn extends AppCompatActivity {
                             Common.currentStaffId = dataSnapshot.child(edtPhone.getText().toString()).getKey();
                             // if type correct password
                             if(staff.getPassword().equals(edtPassword.getText().toString())){
+                                Common.loginTime = System.currentTimeMillis();
                                 Intent homeIntent = new Intent(SignIn.this, TableList.class);
                                 Common.currentStaff = staff;
                                 startActivity(homeIntent);

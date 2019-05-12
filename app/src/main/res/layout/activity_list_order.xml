@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,9 +17,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
-    
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_quick_order"
+        android:backgroundTint="@android:color/white"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="116dp"
+        android:src="@drawable/ic_add_black_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <android.support.v7.widget.CardView
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
         android:background="@drawable/rectangle_rounded"
         app:cardBackgroundColor="#3f8f8d"
         android:layout_width="match_parent"
@@ -90,7 +98,6 @@
             </LinearLayout>
         </RelativeLayout>
 
-
     </android.support.v7.widget.CardView>
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

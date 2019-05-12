@@ -7,22 +7,37 @@
     android:background="@drawable/test3"
     tools:context=".SearchFood"
     >
-
-    <com.mancj.materialsearchbar.MaterialSearchBar
+    <LinearLayout
+        android:id="@+id/content_search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/searchBar"
-        android:layout_alignParentTop="true"
-        app:mt_placeholder="Tìm món"
-        app:mt_placeholderColor="@android:color/black"
-        app:mt_searchIconTint="@android:color/black"
-        app:mt_backIconTint="@android:color/black"
-        app:mt_speechMode="false"
-        app:mt_hint="Nhập tên món ăn"
-        />
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:background="@android:color/white">
+        <ImageView
+            android:id="@+id/img_cancel_search_food_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:src="@drawable/ic_close_black_16dp"/>
+        <com.mancj.materialsearchbar.MaterialSearchBar
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            android:id="@+id/searchBar"
+            android:layout_alignParentTop="true"
+            app:mt_placeholder="Tìm món"
+            app:mt_placeholderColor="@android:color/black"
+            app:mt_searchIconTint="@android:color/black"
+            app:mt_backIconTint="@android:color/black"
+            app:mt_speechMode="false"
+            app:mt_hint="Nhập tên món ăn"
+            />
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="8dp"
-        android:layout_below="@+id/searchBar"
+        android:layout_below="@+id/content_search_bar"
         android:id="@+id/recycler_food"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
