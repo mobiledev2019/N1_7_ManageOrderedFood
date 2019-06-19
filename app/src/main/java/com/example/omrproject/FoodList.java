@@ -162,8 +162,7 @@ public class FoodList extends AppCompatActivity {
 
     private void runLayoutAnimation(final RecyclerView recyclerView, FirebaseRecyclerAdapter<Food, FoodViewHolder> adapter) {
         final Context context = recyclerView.getContext();
-        final LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_right_to_left);
+        final LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_right_to_left);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutAnimation(controller);

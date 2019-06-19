@@ -2,6 +2,7 @@ package com.example.omrproject;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,10 @@ import com.google.firebase.database.ValueEventListener;
 public class SignIn extends AppCompatActivity {
     EditText edtPhone, edtPassword;
     Button btnSignIn;
+
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile = "com.example.omrproject";
+    private String isLogin = "false";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +36,9 @@ public class SignIn extends AppCompatActivity {
 
         edtPhone = (EditText) findViewById(R.id.edtPhone);
         edtPassword = (EditText) findViewById(R.id.edtPassword);
-
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        isLogin = mPreferences.getString("IS_LOGIN", isLogin);
         //Init Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference table_staff = database.getReference("Staff");
