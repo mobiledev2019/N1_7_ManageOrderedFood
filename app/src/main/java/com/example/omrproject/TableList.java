@@ -168,7 +168,7 @@ public class TableList extends AppCompatActivity implements NavigationView.OnNav
 
     private void loadTables(){
 
-        FirebaseRecyclerOptions<Table> options = new FirebaseRecyclerOptions.Builder<Table>().setQuery(tables, Table.class).build();
+        FirebaseRecyclerOptions<Table> options = new FirebaseRecyclerOptions.Builder<Table>().setQuery(tables.orderByChild("location").equalTo(Common.currentStaff.getLocation()), Table.class).build();
         adapter = new FirebaseRecyclerAdapter<Table, TableViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull TableViewHolder holder, int position, @NonNull Table model) {

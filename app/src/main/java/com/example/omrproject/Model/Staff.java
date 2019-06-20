@@ -1,17 +1,18 @@
 package com.example.omrproject.Model;
 
 public class Staff {
-    private String fullName, address, password, gender, ship;
+    private String fullName, address, password, gender, ship, location;
 
     public Staff() {
     }
 
-    public Staff(String fullName, String address, String password, String gender, String ship) {
+    public Staff(String fullName, String address, String password, String gender, String ship, String location) {
         this.fullName = fullName;
         this.address = address;
         this.password = password;
         this.gender = gender;
         this.ship = ship;
+        this.location = location;
     }
 
     public String getAddress() {
@@ -52,5 +53,13 @@ public class Staff {
 
     public void setShip(String ship) {
         this.ship = ship;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }
